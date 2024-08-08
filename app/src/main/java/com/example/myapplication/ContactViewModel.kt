@@ -58,9 +58,28 @@ class ContactViewModel(
                 val phoneNumber = state.value.phoneNumber
 
                 if (firstName.isBlank() || lastName.isBlank() || phoneNumber.isBlank()){
-
-                    
+                    return
                 }
+                val contact = Contact(
+                    FirstName = firstName,
+                    lastName = lastName,
+                    phoneNumber = phoneNumber.toInt()
+                )
+                viewModelScope.launch {
+                    dao.upsertContact(contact)
+                }
+
+                _state.update {
+                    it.copy(
+                        isAddingContact = false,
+                        firstName = "",
+                        lastName = "",
+                        phoneNumber = ""
+                    )
+
+                }
+
+
 
             }
             is ContactEvent.SetFirstName -> {
